@@ -12,16 +12,29 @@ export default function Chat() {
         <Link
           href="#"
           className="p-2 rounded-lg bg-[#000080]/20 text-[#000080]"
+          title="Home"
         >
           <Home className="h-6 w-6" />
         </Link>
-        <Link href="#" className="p-2 rounded-lg text-[#000080]/70">
+        <Link
+          href="#"
+          className="p-2 rounded-lg text-[#000080]/70"
+          title="Points Calculator"
+        >
           <Calculator className="h-6 w-6" />
         </Link>
-        <Link href="#" className="p-2 rounded-lg text-[#000080]">
+        <Link
+          href="#"
+          className="p-2 rounded-lg text-[#000080]"
+          title="Profile"
+        >
           <User className="h-6 w-6" />
         </Link>
-        <Link href="#" className="p-2 rounded-lg text-[#000080]/70">
+        <Link
+          href="#"
+          className="p-2 rounded-lg text-[#000080]/70"
+          title="Settings"
+        >
           <Settings className="h-6 w-6" />
         </Link>
       </aside>
