@@ -2,7 +2,11 @@
 
 import { useState } from "react";
 
-export default function ChatArea() {
+export default function ChatArea({
+  messages,
+}: {
+  messages: Array<{ role: string; content: string }>;
+}) {
   const [chatMode, setChatMode] = useState("Advisor");
 
   return (
