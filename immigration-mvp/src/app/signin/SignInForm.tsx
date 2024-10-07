@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -13,6 +13,7 @@ import { useToast } from "@/hooks/use-toast";
 export default function SignInForm() {
   const router = useRouter();
   const setAuth = useAuthStore((state) => state.setAuth);
+  const setThreadId = useAuthStore((state) => state.setThreadId);
   const { toast } = useToast();
 
   const [formData, setFormData] = useState({
@@ -36,7 +37,7 @@ export default function SignInForm() {
     setError(null);
   };
 
-  const handleSignIn = async () => {
+  const handleSignIn = useCallback(async () => {
     if (isFormValid) {
       try {
         const response = await fetch("http://localhost:8000/signin", {
@@ -53,7 +54,10 @@ export default function SignInForm() {
 
         if (response.ok) {
           const userData = await response.json();
-          setAuth(userData.id_Token || "dummy_token", formData.email);
+          setAuth(userData.user.idToken || "dummy_token", formData.email);
+          if (userData.thread_id) {
+            setThreadId(userData.thread_id);
+          }
           toast({
             title: "Success",
             description: "You have successfully signed in!",
@@ -74,7 +78,7 @@ export default function SignInForm() {
         });
       }
     }
-  };
+  }, [formData, isFormValid, setAuth, setThreadId, toast, router]);
 
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);
