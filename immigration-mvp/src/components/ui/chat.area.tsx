@@ -11,14 +11,14 @@ export default function ChatArea() {
         Your Immigration Assistant.
       </h2>
       <div className="flex justify-center items-center mb-6">
-        <span className="mr-2 text-pink-700">Chat Mode:</span>
-        <span className="font-bold text-pink-700">{chatMode}</span>
+        <span className="mr-2 text-[#000080]">Chat Mode:</span>
+        <span className="font-bold text-[#000080]">{chatMode}</span>
       </div>
 
       {/* Chat messages */}
       <div className="space-y-4">
         <div className="flex items-start">
-          <div className="bg-pink-600 rounded-full p-2 mr-2">
+          <div className="bg-[#000080] rounded-full p-2 mr-2">
             {/* Bot avatar placeholder */}
           </div>
           <div className="bg-white rounded-lg p-4 max-w-md">
@@ -30,7 +30,7 @@ export default function ChatArea() {
           </div>
         </div>
         <div className="flex items-start">
-          <div className="bg-pink-600 rounded-full p-2 mr-2">
+          <div className="bg-[#000080] rounded-full p-2 mr-2">
             {/* Bot avatar placeholder */}
           </div>
           <div className="bg-white rounded-lg p-4 max-w-md">
