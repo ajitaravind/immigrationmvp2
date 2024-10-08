@@ -24,11 +24,9 @@ export default function Chat() {
   const handleSendMessage = useCallback(async () => {
     if (inputMessage.trim() === "") return;
 
-    const newMessages: Message[] = [
-      ...chatMessages,
-      { role: "human", content: inputMessage },
-    ];
-    setChatMessages(newMessages);
+    // Add the human's message to the chat
+    const newHumanMessage: Message = { role: "human", content: inputMessage };
+    setChatMessages((prevMessages) => [...prevMessages, newHumanMessage]);
     setInputMessage("");
 
     try {
@@ -36,19 +34,30 @@ export default function Chat() {
         messages: [{ role: "human", content: inputMessage }],
         email: email || "",
         thread_id: thread_id || "",
-        prompt: inputMessage, //
+        prompt: inputMessage,
       });
 
       if (response.data.messages && response.data.messages.length > 0) {
-        const aiResponse: Message =
-          response.data.messages[response.data.messages.length - 1];
-        setChatMessages([...newMessages, aiResponse]);
+        // Find the AI's response
+        const aiResponse = response.data.messages.find(
+          (msg) => msg.role === "ai",
+        );
+        if (aiResponse) {
+          // Add the AI's response to the chat
+          setChatMessages((prevMessages) => [
+            ...prevMessages,
+            {
+              role: "ai",
+              content: aiResponse.content,
+            },
+          ]);
+        }
       }
     } catch (error) {
       console.error("Error sending chat message:", error);
       // TODO: Handle error (e.g., show error message to user)
     }
-  }, [inputMessage, chatMessages, email, thread_id]);
+  }, [inputMessage, email, thread_id]);
 
   const memoizedChatArea = useMemo(
     () => <ChatArea messages={chatMessages} />,

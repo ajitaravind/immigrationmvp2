@@ -88,12 +88,12 @@ def scrape_web(url: str):
         return f"Failed to scrape the URL. Error: {str(e)}"
 
 def extract_output(text):
-    pattern = r'<output>(.*?)</output>'
+    pattern = r'<output>(.*?)(?:</output>|$)'
     match = re.search(pattern, text, re.DOTALL)
     if match:
         return match.group(1).strip()
     else:
-        return "No output found. The AI assistant may have failed to format its response correctly."    
+        return "No output found. The AI assistant may have failed to format its response correctly."
 
 tools = [search_web,scrape_web]
 
