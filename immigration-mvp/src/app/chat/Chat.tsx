@@ -9,12 +9,16 @@ import ChatArea from "@/components/ui/chat.area";
 import { Home, Calculator, User, Settings, Send } from "lucide-react";
 import Link from "next/link";
 
+import { useRouter } from "next/navigation";
+
 interface Message {
   role: "human" | "ai";
   content: string;
 }
 
 export default function Chat() {
+  const router = useRouter();
+
   const email = useAuthStore((state) => state.email);
   const thread_id = useAuthStore((state) => state.thread_id);
 
@@ -107,6 +111,17 @@ export default function Chat() {
             <select className="bg-transparent text-[#000080] border-none">
               <option>Australia</option>
             </select>
+          </div>
+          <div className="flex items-center space-x-4">
+            <Button
+              className="bg-[#000080] text-white"
+              onClick={() => router.push("/signup")}
+            >
+              Sign up
+            </Button>
+            <div className="text-[#000080] font-semibold">
+              You have 20 messages left
+            </div>
           </div>
         </header>
 
