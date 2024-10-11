@@ -25,7 +25,7 @@ interface Message {
 export default function Chat() {
 	const router = useRouter();
 	const { toast } = useToast();
-	const [isTestMode, setIsTestMode] = useState(true);
+	const [isTestMode, setIsTestMode] = useState(true); //change to false for production
 	const [inputMessage, setInputMessage] = useState("");
 	const [chatMessages, setChatMessages] = useState<Message[]>([]);
 	const [remainingMessages, setRemainingMessages] = useState(20);
@@ -185,17 +185,6 @@ export default function Chat() {
 							</Button>
 						</div>
 					</div>
-				)}
-
-				{isTestMode && (
-					<Button
-						onClick={() =>
-							setRemainingMessages((prev) => Math.max(0, prev - 1))
-						}
-						className="mb-4 bg-red-500 text-white"
-					>
-						Debug: Decrease Message Count
-					</Button>
 				)}
 
 				{/* Input area */}
