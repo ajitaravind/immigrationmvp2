@@ -40,7 +40,7 @@ export default function Chat() {
       if (response.data.messages && response.data.messages.length > 0) {
         // Find the AI's response
         const aiResponse = response.data.messages.find(
-          (msg) => msg.role === "ai",
+          (msg: Message) => msg.role === "ai",
         );
         if (aiResponse) {
           // Add the AI's response to the chat

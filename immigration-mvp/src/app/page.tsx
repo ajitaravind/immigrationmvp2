@@ -1,5 +1,5 @@
-import SignUpPage from "./signup/page";
+import Chat from "./chat/Chat";
 
 export default function HomePage() {
-  return <SignUpPage />;
+	return <Chat />;
 }
