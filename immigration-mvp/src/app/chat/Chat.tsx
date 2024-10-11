@@ -1,21 +1,17 @@
 "use client";
 
-import { useState, useCallback, useMemo } from "react";
-import { useAuthStore } from "@/stores/authStore";
 import axios from "axios";
+
+import { useState, useCallback, useMemo, useEffect } from "react";
+import { useAuthStore } from "@/stores/authStore";
+import { useRouter } from "next/navigation";
+import { useToast } from "@/hooks/use-toast";
+
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import ChatArea from "@/components/ui/chat.area";
 import { Home, Calculator, User, Settings, Send } from "lucide-react";
 import Link from "next/link";
-
-import { useRouter } from "next/navigation";
-
-import { useToast } from "@/hooks/use-toast";
-
-// Test mode flag
-
-import { useEffect } from "react";
 
 interface Message {
 	role: "human" | "ai";
@@ -30,9 +26,11 @@ export default function Chat() {
 	const [chatMessages, setChatMessages] = useState<Message[]>([]);
 	const [remainingMessages, setRemainingMessages] = useState(20);
 	const [showOverlay, setShowOverlay] = useState(false);
+	const email = useAuthStore((state) => state.email);
+	const token = useAuthStore((state) => state.token);
+	const thread_id = useAuthStore((state) => state.thread_id);
 
-	const email = useAuthStore((state: any) => state.email);
-	const thread_id = useAuthStore((state: any) => state.thread_id);
+	const isAuthenticated = !!token;
 
 	const mockApiCall = useCallback(async (message: string) => {
 		return new Promise<{ data: { messages: Message[] } }>((resolve) => {
@@ -50,20 +48,23 @@ export default function Chat() {
 	}, []);
 
 	const handleSendMessage = useCallback(async () => {
-		if (inputMessage.trim() === "" || remainingMessages <= 0) return;
+		if (inputMessage.trim() === "") return;
+		if (!isAuthenticated && remainingMessages <= 0) return;
 
-		setRemainingMessages((prev) => {
-			const newCount = prev - 1;
-			if (newCount === 0) {
-				setShowOverlay(true);
-				toast({
-					title: "Message Limit Reached",
-					description:
-						"You've reached the free message limit. Sign up to continue chatting!",
-				});
-			}
-			return newCount;
-		});
+		if (!isAuthenticated) {
+			setRemainingMessages((prev) => {
+				const newCount = prev - 1;
+				if (newCount === 0) {
+					setShowOverlay(true);
+					toast({
+						title: "Message Limit Reached",
+						description:
+							"You've reached the free message limit. Sign up to continue chatting!",
+					});
+				}
+				return newCount;
+			});
+		}
 
 		const newHumanMessage: Message = { role: "human", content: inputMessage };
 		setChatMessages((prevMessages) => [...prevMessages, newHumanMessage]);
@@ -105,10 +106,10 @@ export default function Chat() {
 	);
 
 	useEffect(() => {
-		if (remainingMessages === 0) {
+		if (!isAuthenticated && remainingMessages === 0) {
 			setShowOverlay(true);
 		}
-	}, [remainingMessages]);
+	}, [remainingMessages, isAuthenticated]);
 
 	return (
 		<div className="flex h-screen bg-gradient-to-b from-[#E6E6FA] to-[#D8BFD8]">
@@ -155,15 +156,27 @@ export default function Chat() {
 						</select>
 					</div>
 					<div className="flex items-center space-x-4">
-						<Button
-							className="bg-[#000080] text-white"
-							onClick={() => router.push("/signup")}
-						>
-							Sign up
-						</Button>
-						<div className="text-[#000080] font-semibold">
-							You have {remainingMessages} messages left
-						</div>
+						{!isAuthenticated && (
+							<>
+								<Button
+									className="bg-[#000080] text-white"
+									onClick={() => router.push("/signup")}
+								>
+									Sign up
+								</Button>
+								<div className="text-[#000080] font-semibold">
+									You have {remainingMessages} messages left
+								</div>
+							</>
+						)}
+						{isAuthenticated && (
+							<Button
+								className="bg-[#000080] text-white"
+								onClick={() => useAuthStore.getState().clearAuth()}
+							>
+								Sign out
+							</Button>
+						)}
 					</div>
 				</header>
 
@@ -210,12 +223,12 @@ export default function Chat() {
 							onKeyDown={(e) => {
 								if (e.key === "Enter") handleSendMessage();
 							}}
-							disabled={remainingMessages === 0}
+							disabled={!isAuthenticated && remainingMessages === 0}
 						/>
 						<Button
 							className="bg-transparent"
 							onClick={handleSendMessage}
-							disabled={remainingMessages === 0}
+							disabled={!isAuthenticated && remainingMessages === 0}
 						>
 							<Send className="h-6 w-6 text-[#000080]" />
 						</Button>
