@@ -25,7 +25,12 @@ export default function Chat() {
   const [inputMessage, setInputMessage] = useState("");
   const [chatMessages, setChatMessages] = useState<Message[]>([]);
 
-  const handleSendMessage = useCallback(async () => {
+  const [remainingMessages, setRemainingMessages] = useState(20);
+
+  const handleSendMessage = useCallback(async (): Promise<void> => {
+    if (inputMessage.trim() === "" || remainingMessages <= 0) return;
+
+    setRemainingMessages((prev) => prev - 1);
     if (inputMessage.trim() === "") return;
 
     // Add the human's message to the chat
@@ -120,7 +125,7 @@ export default function Chat() {
               Sign up
             </Button>
             <div className="text-[#000080] font-semibold">
-              You have 20 messages left
+              You have {remainingMessages} messages left
             </div>
           </div>
         </header>
